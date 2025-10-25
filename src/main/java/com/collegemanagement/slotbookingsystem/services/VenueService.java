@@ -4,7 +4,7 @@ import java.util.List;
 
 import org.springframework.stereotype.Service;
 
-import com.collegemanagement.slotbookingsystem.dao.venue.VenueDao;
+import com.collegemanagement.slotbookingsystem.repository.venue.VenueDao;
 import com.collegemanagement.slotbookingsystem.model.Venue;
 
 @Service

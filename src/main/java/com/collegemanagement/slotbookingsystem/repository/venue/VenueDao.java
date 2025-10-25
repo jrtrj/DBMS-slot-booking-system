@@ -1,4 +1,4 @@
-package com.collegemanagement.slotbookingsystem.dao.venue;
+package com.collegemanagement.slotbookingsystem.repository.venue;
 
 import java.util.List;
 import java.util.Optional;
