@@ -1,6 +1,6 @@
 package com.collegemanagement.slotbookingsystem.services;
 
-import com.collegemanagement.slotbookingsystem.repository.UserDao;
+import com.collegemanagement.slotbookingsystem.repository.user.UserDao;
 import com.collegemanagement.slotbookingsystem.model.Role;
 import com.collegemanagement.slotbookingsystem.model.User;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -25,11 +25,6 @@ public class UserService {
         this.passwordEncoder = passwordEncoder;
     }
 
-    /**
-     * Gets a list of all users.
-     * NOTE: In a real app, we would hide the password_hash!
-     * @return List of all users.
-     */
     public List<User> getAllUsers() {
         return userDao.findAll();
     }
@@ -44,7 +39,7 @@ public class UserService {
         String email = (String) userData.get("email");
         String plainTextPassword = (String) userData.get("password");
 
-        // 1. Validation Logic
+        // Validation Logic
         if (userDao.findByEmail(email).isPresent()) {
             throw new RuntimeException("Email already in use");
         }
@@ -52,10 +47,9 @@ public class UserService {
             throw new RuntimeException("Password cannot be empty");
         }
 
-        // 2. Business Logic: Hash the password
+        // Hash the password
         String hashedPassword = passwordEncoder.encode(plainTextPassword);
-
-        // 3. Create the new User record
+        // Create the new User record
         User newUser = new User(
                 null, // id is null because it will be auto-generated
                 email,
@@ -66,15 +60,12 @@ public class UserService {
                 ((Number) userData.get("departmentId")).longValue()
         );
 
-        // 4. Save to database and get the new ID
+        // Save to database and get the new ID
         Long newId = userDao.save(newUser);
 
-        // 5. Return the complete user object (without the password!)
-        // We call findById to get the object we just created.
         return userDao.findById(newId).orElseThrow(() ->
                 new RuntimeException("Failed to create and retrieve user")
         );
     }
 
-    // We will add a login(email, password) method here later.
 }

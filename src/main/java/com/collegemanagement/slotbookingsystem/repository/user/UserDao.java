@@ -15,23 +15,19 @@ import java.util.Optional;
 @Repository
 public class UserDao {
 
+    //JdbcTemplate is stateless and thread-safe
+    //Created initially by HikariCP
     private final JdbcTemplate jdbcTemplate;
 
     public UserDao(JdbcTemplate jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
     }
 
-    /**
-     * READ: Fetches all users.
-     */
     public List<User> findAll() {
         String sql = "SELECT * FROM users";
         return jdbcTemplate.query(sql, new UserRowMapper());
     }
 
-    /**
-     * READ: Finds a single user by their unique ID.
-     */
     public Optional<User> findById(Long id) {
         String sql = "SELECT * FROM users WHERE id = ?";
         try {
@@ -42,10 +38,7 @@ public class UserDao {
         }
     }
 
-    /**
-     * READ: Finds a single user by their email.
-     * This is CRITICAL for our login logic.
-     */
+    // for login logic
     public Optional<User> findByEmail(String email) {
         String sql = "SELECT * FROM users WHERE email = ?";
         try {
@@ -56,12 +49,8 @@ public class UserDao {
         }
     }
 
-    /**
-     * CREATE: Saves a new user to the database.
-     * This method expects the password to ALREADY BE HASHED.
-     * The hashing logic will live in the Service layer.
-     * @return The auto-generated ID of the new user.
-     */
+     // This method expects the password to ALREADY BE HASHED.
+     // The hashing logic will live in the Service layer.
     public Long save(User user) {
         String sql = "INSERT INTO users (email, password_hash, first_name, last_name, role, department_id) " +
                 "VALUES (?, ?, ?, ?, ?, ?)";
@@ -73,7 +62,7 @@ public class UserDao {
             ps.setString(2, user.passwordHash());
             ps.setString(3, user.firstName());
             ps.setString(4, user.lastName());
-            ps.setString(5, user.role().name()); // Convert Enum to string for DB
+            ps.setString(5, user.role().name());
             ps.setLong(6, user.departmentId());
             return ps;
         }, keyHolder);

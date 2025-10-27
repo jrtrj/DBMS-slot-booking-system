@@ -30,7 +30,7 @@ public class DepartmentDao {
     public Optional<Department> findById(Long id) {
        String sql = "SELECT id,name,hod_id FROM departments WHERE id = ?";
        try{
-            // Corrected: Pass the 'id' parameter to the query.
+            //queryForObject returns a single object
             Department department = jdbctemplate.queryForObject(sql, new DepartmentRowMapper(), id);
             return Optional.ofNullable(department);
        }
@@ -43,7 +43,6 @@ public class DepartmentDao {
     public Optional<Department> findByHodId(Long hod_id) {
         String sql = "SELECT id,name,hod_id FROM departments WHERE hod_id=?";
         try{
-            // Corrected: Pass the 'hod_id' parameter to the query.
             Department department = jdbctemplate.queryForObject(sql,new DepartmentRowMapper(), hod_id);
             return Optional.ofNullable(department);
         }
@@ -54,8 +53,10 @@ public class DepartmentDao {
 
     public Long save(String departmentName) {
         String sql = "INSERT INTO departments (name) VALUES (?)";
+        //KeyHolder retrieves Auto-generated keys
         KeyHolder keyHolder = new GeneratedKeyHolder();
-        
+
+        //AHH functional things
 		jdbctemplate.update(connection -> {
             PreparedStatement ps = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
             ps.setString(1, departmentName);

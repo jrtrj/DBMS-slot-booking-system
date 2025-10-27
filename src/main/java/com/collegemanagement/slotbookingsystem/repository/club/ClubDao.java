@@ -10,6 +10,7 @@ import org.springframework.stereotype.Repository;
 import java.sql.PreparedStatement;
 import java.sql.Statement;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 @Repository
@@ -21,17 +22,11 @@ public class ClubDao {
         this.jdbcTemplate = jdbcTemplate;
     }
 
-    /**
-     * READ: Fetches all clubs from the database.
-     */
     public List<Club> findAll() {
         String sql = "SELECT id, name, faculty_advisor_id FROM clubs";
         return jdbcTemplate.query(sql, new ClubRowMapper());
     }
 
-    /**
-     * READ: Finds a single club by its unique ID.
-     */
     public Optional<Club> findById(Long id) {
         String sql = "SELECT id, name, faculty_advisor_id FROM clubs WHERE id = ?";
         try {
@@ -42,10 +37,6 @@ public class ClubDao {
         }
     }
 
-    /**
-     * CREATE: Saves a new club to the database.
-     * @return The auto-generated ID of the new club.
-     */
     public Long save(String clubName) {
         String sql = "INSERT INTO clubs (name) VALUES (?)";
         KeyHolder keyHolder = new GeneratedKeyHolder();
@@ -56,8 +47,7 @@ public class ClubDao {
             return ps;
         }, keyHolder);
 
-        return keyHolder.getKey().longValue();
+        return Objects.requireNonNull(keyHolder.getKey()).longValue();
     }
     
-    // We will add `update` and `delete` methods later.
 }

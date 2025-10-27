@@ -7,9 +7,6 @@ import org.springframework.jdbc.core.RowMapper;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-/**
- * Maps a row from the 'users' table to a User record.
- */
 public class UserRowMapper implements RowMapper<User> {
 
     @Override
@@ -20,7 +17,7 @@ public class UserRowMapper implements RowMapper<User> {
                 rs.getString("password_hash"),
                 rs.getString("first_name"),
                 rs.getString("last_name"),
-                Role.valueOf(rs.getString("role")), // Convert the string from DB to an Enum
+                Role.valueOf(rs.getString("role")),
                 rs.getLong("department_id")
         );
     }
