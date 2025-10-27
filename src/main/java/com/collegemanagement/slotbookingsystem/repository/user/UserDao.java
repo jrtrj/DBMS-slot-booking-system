@@ -59,7 +59,7 @@ public class UserDao {
         jdbcTemplate.update(connection -> {
             PreparedStatement ps = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
             ps.setString(1, user.email());
-            ps.setString(2, user.passwordHash());
+            ps.setString(2, user.hashedPassword());
             ps.setString(3, user.firstName());
             ps.setString(4, user.lastName());
             ps.setString(5, user.role().name());
