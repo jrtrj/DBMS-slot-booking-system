@@ -1,6 +1,6 @@
 package com.collegemanagement.slotbookingsystem.services;
 
-import com.collegemanagement.slotbookingsystem.repository.Department.DepartmentDao;
+import com.collegemanagement.slotbookingsystem.repository.department.DepartmentDao;
 import com.collegemanagement.slotbookingsystem.model.Department;
 import org.springframework.stereotype.Service;
 

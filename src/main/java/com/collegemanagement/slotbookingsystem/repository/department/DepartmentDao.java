@@ -1,4 +1,4 @@
-package com.collegemanagement.slotbookingsystem.repository.Department;
+package com.collegemanagement.slotbookingsystem.repository.department;
 
 import java.util.List;
 import java.util.Optional;

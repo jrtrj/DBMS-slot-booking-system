@@ -1,4 +1,4 @@
-package com.collegemanagement.slotbookingsystem.repository.Department;
+package com.collegemanagement.slotbookingsystem.repository.department;
 
 import com.collegemanagement.slotbookingsystem.model.Department;
 import org.springframework.jdbc.core.RowMapper;
