@@ -7,5 +7,5 @@ public record User(
 	String firstName,
 	String lastName,
 	Role role,
-	String departmentId
+	Long departmentId
 ){}

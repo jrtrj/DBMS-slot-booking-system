@@ -23,14 +23,15 @@ public class DepartmentDao {
     }
 
     public List<Department> findAll() {
-        final String sql = "SELECT id, name, hod_id FROM department";
+        final String sql = "SELECT id, name, hod_id FROM departments";
         return jdbctemplate.query(sql,new DepartmentRowMapper());
     }
 
     public Optional<Department> findById(Long id) {
-       String sql = "SELECT id,name,hod_id FROM department WHERE id = ?";
+       String sql = "SELECT id,name,hod_id FROM departments WHERE id = ?";
        try{
-            Department department = jdbctemplate.queryForObject(sql, new DepartmentRowMapper());
+            // Corrected: Pass the 'id' parameter to the query.
+            Department department = jdbctemplate.queryForObject(sql, new DepartmentRowMapper(), id);
             return Optional.ofNullable(department);
        }
        catch(EmptyResultDataAccessException e) {
@@ -40,9 +41,10 @@ public class DepartmentDao {
     }
 
     public Optional<Department> findByHodId(Long hod_id) {
-        String sql = "SELECT id,name,hod_id FROM department WHERE hod_id=?";
+        String sql = "SELECT id,name,hod_id FROM departments WHERE hod_id=?";
         try{
-            Department department = jdbctemplate.queryForObject(sql,new DepartmentRowMapper());
+            // Corrected: Pass the 'hod_id' parameter to the query.
+            Department department = jdbctemplate.queryForObject(sql,new DepartmentRowMapper(), hod_id);
             return Optional.ofNullable(department);
         }
         catch(EmptyResultDataAccessException e) {
@@ -51,7 +53,7 @@ public class DepartmentDao {
     }
 
     public Long save(String departmentName) {
-        String sql = "INSERT INTO (name) VALUES ?";
+        String sql = "INSERT INTO departments (name) VALUES (?)";
         KeyHolder keyHolder = new GeneratedKeyHolder();
         
 		jdbctemplate.update(connection -> {

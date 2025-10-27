@@ -3,6 +3,7 @@ package com.collegemanagement.slotbookingsystem.controller;
 import com.collegemanagement.slotbookingsystem.model.Department;
 import com.collegemanagement.slotbookingsystem.services.DepartmentService;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -51,7 +52,7 @@ public class DepartmentController {
      * @param requestBody A JSON object, e.g., { "name": "Computer Science" }
      * @return The newly created department (as JSON) and a 201 Created status.
      */
-    @PostMapping
+    @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.CREATED)
     public Department createDepartment(@RequestBody Map<String, String> requestBody) {
         // We expect a JSON object with a "name" key.
