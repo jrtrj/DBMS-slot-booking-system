@@ -1,7 +1,7 @@
 package com.collegemanagement.slotbookingsystem.controller;
 
 import com.collegemanagement.slotbookingsystem.model.User;
-import com.collegemanagement.slotbookingsystem.service.UserService;
+import com.collegemanagement.slotbookingsystem.services.UserService;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
