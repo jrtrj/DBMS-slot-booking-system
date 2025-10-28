@@ -4,6 +4,7 @@
 	function isActive(path) {
 		return $page.url.pathname === path ? 'active' : '';
 	}
+	let routepath = $props()
 </script>
 
 <main>
