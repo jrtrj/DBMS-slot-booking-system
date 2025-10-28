@@ -1,11 +1,70 @@
 <script>
-	import Header from '$lib/Header.svelte';
-	import { goto } from '$app/navigation';
+	import { goto } from "$app/navigation";
+	import Header from "$lib/Header.svelte";
 
 	let email = $state('');
 	let passsword = $state('');
 	let selected = $state('user');
 	let loginError = $state('');
+
+	const dummyUsers = [
+		// Students
+		{
+			id: 7,
+			email: 'amit.cs@college.com',
+			password: 'password',
+			firstName: 'Amit',
+			lastName: 'Jain',
+			role: 'student',
+			departmentId: 1
+		},
+		{
+			id: 8,
+			email: 'deepa.ece@college.com',
+			password: 'password',
+			firstName: 'Deepa',
+			lastName: 'M',
+			role: 'student',
+			departmentId: 2
+		},
+		{
+			id: 9,
+			email: 'riya.cs@college.com',
+			password: 'password',
+			firstName: 'Riya',
+			lastName: 'Verma',
+			role: 'student',
+			departmentId: 1
+		},
+		// Admins (HODs)
+		{
+			id: 3,
+			email: 'hod.cs@college.com',
+			password: 'password',
+			firstName: 'Dr. Anil',
+			lastName: 'Kumar',
+			role: 'HOD',
+			departmentId: 1
+		},
+		{
+			id: 4,
+			email: 'hod.ece@college.com',
+			password: 'password',
+			firstName: 'Dr. Sunita',
+			lastName: 'Reddy',
+			role: 'HOD',
+			departmentId: 2
+		},
+		{
+			id: 5,
+			email: 'hod.mech@college.com',
+			password: 'password',
+			firstName: 'Dr. Ramesh',
+			lastName: 'Patel',
+			role: 'HOD',
+			departmentId: 3
+		}
+	];
 
 	function select(role) {
 		selected = role;
@@ -15,23 +74,31 @@
 		e.preventDefault();
 		loginError = '';
 		const role = selected === 'user' ? 'student' : 'HOD';
-		try {
-			const res = await fetch('http://localhost:8080/api/users/login', {
-				method: 'POST',
-				headers: { 'Content-Type': 'application/json' },
-				body: JSON.stringify({ email, password: passsword, role })
-			});
-			if (!res.ok) {
-				throw new Error('Email or password is incorrect');
-			}
-			// Optionally check response for more info
-			if (selected === 'user') {
+
+		// Dummy user check (local only)
+		if (role === 'student') {
+			const user = dummyUsers.find(
+				(u) => u.email === email && u.password === passsword && u.role === 'student'
+			);
+			if (user) {
 				goto('/userhome');
+				return;
 			} else {
-				goto('/adminhome');
+				loginError = 'Email or password is incorrect';
+				return;
 			}
-		} catch (err) {
-			loginError = err.message;
+		}
+		if (role === 'HOD') {
+			const admin = dummyUsers.find(
+				(u) => u.email === email && u.password === passsword && u.role === 'HOD'
+			);
+			if (admin) {
+				goto('/adminhome');
+				return;
+			} else {
+				loginError = 'Email or password is incorrect';
+				return;
+			}
 		}
 	}
 </script>

@@ -1,5 +1,6 @@
 <script>
 	import Header from '$lib/Header.svelte';
+	import Navigation from '$lib/Navigation.svelte';
 	import { onMount } from 'svelte';
 
 	let pending = $state([]);
@@ -127,6 +128,8 @@
 			{/each}
 		</div>
 	{/if}
+
+    <Navigation />
 </main>
 
 <style>

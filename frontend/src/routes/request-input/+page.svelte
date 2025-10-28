@@ -14,7 +14,7 @@
 
 	onMount(async () => {
 		try {
-			const res = await fetch('	');
+			const res = await fetch('http://localhost:8080/api/venues');
 			if (!res.ok) throw new Error('Failed to fetch venues');
 			venues = await res.json();
 			venuesLoading = false;
