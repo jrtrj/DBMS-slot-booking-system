@@ -58,7 +58,7 @@
 
 <main>
 	<Header h1="NEW EVENT!" h2="Add details" showBell={true} />
-	<form class="request-form" on:submit|preventDefault={handleSubmit}>
+	<form class="request-form" onsubmit={handleSubmit}>
 		<label class="input-label" for="eventName">Event Name</label>
 		<input
 			id="eventName"
