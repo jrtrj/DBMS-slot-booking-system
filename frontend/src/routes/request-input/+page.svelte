@@ -97,7 +97,7 @@
 
 		<button type="submit" class="submit-btn">Submit</button>
 	</form>
-	<Navigation />
+	<Navigation role ="user"/>
 </main>
 
 <style>

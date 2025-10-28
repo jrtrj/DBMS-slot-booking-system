@@ -129,7 +129,7 @@
 		</div>
 	{/if}
 
-    <Navigation />
+    <Navigation role ="admin"/>
 </main>
 
 <style>

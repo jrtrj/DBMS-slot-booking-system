@@ -48,7 +48,7 @@
 	</div>
     <!-- <EventCard event_name="Hash" venue="RB Seminar" date="18-OCTober" time="11:00AM-12:00PM" /> -->
 
-	<Navigation />
+	<Navigation role ="user" />
 	
 </main>
 <style>
