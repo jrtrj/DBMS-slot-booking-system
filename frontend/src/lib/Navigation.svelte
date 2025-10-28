@@ -4,11 +4,16 @@
 	function isActive(path) {
 		return $page.url.pathname === path ? 'active' : '';
 	}
+
+	let {role='user'} = $props(); // default to user, can be 'user' or 'admin'
 </script>
 
 <main>
 	<nav class="bottom-nav">
-		<a href="/userhome" class="nav-btn {isActive('/userhome')}">
+		<a
+			href={role === 'admin' ? '/adminhome' : '/userhome'}
+			class="nav-btn {isActive(role === 'admin' ? '/adminhome' : '/userhome')}"
+		>
 			<img src="/house-regular.svg" alt="Home" class="nav-icon" />
 		</a>
 		<a href="/profile" class="nav-btn {isActive('/profile')}">
