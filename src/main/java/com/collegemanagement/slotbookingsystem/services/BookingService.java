@@ -5,6 +5,10 @@ import com.collegemanagement.slotbookingsystem.repository.department.DepartmentD
 import com.collegemanagement.slotbookingsystem.repository.booking.BookingRequestDao;
 import com.collegemanagement.slotbookingsystem.repository.user.UserDao;
 import com.collegemanagement.slotbookingsystem.repository.venue.VenueDao;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -13,24 +17,29 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
-/**
- * Handles all core business logic for creating, approving, and managing bookings.
- * This is the "brain" that coordinates all the DAOs.
- */
 @Service
-public class BookingService {
+public class BookingService implements UserDetailsService {
 
     private final BookingRequestDao bookingRequestDao;
     private final VenueDao venueDao;
     private final UserDao userDao;
     private final DepartmentDao departmentDao;
+    private final PasswordEncoder passwordEncoder;
 
     public BookingService(BookingRequestDao bookingRequestDao, VenueDao venueDao,
-                          UserDao userDao, DepartmentDao departmentDao) {
+                          UserDao userDao, DepartmentDao departmentDao, PasswordEncoder passwordEncoder) {
         this.bookingRequestDao = bookingRequestDao;
         this.venueDao = venueDao;
         this.userDao = userDao;
         this.departmentDao = departmentDao;
+        this.passwordEncoder = passwordEncoder;
+    }
+
+    @Override
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+        // We use email as the username
+        return userDao.findByEmail(username)
+                .orElseThrow(() -> new UsernameNotFoundException("User not found with email: " + username));
     }
 
     /**
@@ -39,7 +48,7 @@ public class BookingService {
      * @param requester The user who is making the request
      * @return The newly created BookingRequest
      */
-    @Transactional // This ensures that all database operations in this method either succeed or fail together
+    @Transactional
     public BookingRequest createBookingRequest(Map<String, Object> requestData, User requester) {
         // 1. Extract data from the request map
         Long venueId = ((Number) requestData.get("venueId")).longValue();
@@ -95,6 +104,14 @@ public class BookingService {
         Long newId = bookingRequestDao.save(newRequest);
         return bookingRequestDao.findById(newId)
                 .orElseThrow(() -> new RuntimeException("Failed to create and retrieve booking request"));
+    }
+
+    /**
+     * Retrieves all approved booking requests.
+     * @return A list of approved bookings.
+     */
+    public List<BookingRequest> getApprovedBookings() {
+        return bookingRequestDao.findApproved();
     }
 
     /**
