@@ -4,6 +4,8 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 
 @Configuration
@@ -13,20 +15,20 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-            // 1. Disable CSRF (Cross-Site Request Forgery)
-            // We can disable this for now as we are building a stateless REST API.
+            // Disable CSRF protection - ideal for stateless APIs and development
             .csrf(csrf -> csrf.disable())
             
-            // 2. Configure Authorization Rules
-            .authorizeHttpRequests(authz -> authz
-                // This line tells Spring Security to allow ALL requests to ALL endpoints.
-                .requestMatchers("/**").permitAll() 
-            )
+            // Define authorization rules
+            .authorizeHttpRequests(auth -> auth
+                // Allow ALL requests to ANY endpoint for debugging purposes
+                .anyRequest().permitAll()
+            );
             
-            // 3. Disable the default login page
-            .formLogin(form -> form.disable())
-            .httpBasic(basic -> basic.disable());
-
         return http.build();
+    }
+
+    @Bean
+    public PasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder();
     }
 }

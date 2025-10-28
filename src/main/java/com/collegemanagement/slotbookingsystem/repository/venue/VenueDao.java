@@ -1,4 +1,4 @@
-package com.collegemanagement.slotbookingsystem.dao.venue;
+package com.collegemanagement.slotbookingsystem.repository.venue;
 
 import java.util.List;
 import java.util.Optional;
@@ -12,6 +12,7 @@ import com.collegemanagement.slotbookingsystem.model.Venue;
 @Repository
 public class VenueDao {
 
+    //JdbcTemplate is used for querying the database safely
 	private final JdbcTemplate jdbcTemplate;
 	//@Autowired
 	public VenueDao(JdbcTemplate jdbcTemplate) {
@@ -20,7 +21,7 @@ public class VenueDao {
 
 	public List<Venue> findAll() {
 		final String sql = "SELECT id, name, block, capacity, department_id FROM venues";
-		// query() for multiple rows and translator
+		// the jdbcTemplate.query() executes static sql queries and maps the result set into objects using RowMapper
 		return jdbcTemplate.query(sql, new VenueRowMapper());
 	}
 	
@@ -37,6 +38,7 @@ public class VenueDao {
 	
 	public int save(Venue venue) {
 	String sql = "INSERT INTO venues (name, block, capacity, department_id) VALUES (?, ?, ?, ?)";
+    //returns the number of rows affected by the update
 	return jdbcTemplate.update(
 			sql,
 			venue.name(),
