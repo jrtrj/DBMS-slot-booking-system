@@ -1,13 +1,38 @@
 <script>
 	import Header from '$lib/Header.svelte';
+	import { goto } from '$app/navigation';
 
 	let email = $state('');
 	let passsword = $state('');
-
 	let selected = $state('user');
+	let loginError = $state('');
 
 	function select(role) {
 		selected = role;
+	}
+
+	async function handleLogin(e) {
+		e.preventDefault();
+		loginError = '';
+		const role = selected === 'user' ? 'student' : 'HOD';
+		try {
+			const res = await fetch('http://localhost:8080/api/users/login', {
+				method: 'POST',
+				headers: { 'Content-Type': 'application/json' },
+				body: JSON.stringify({ email, password: passsword, role })
+			});
+			if (!res.ok) {
+				throw new Error('Email or password is incorrect');
+			}
+			// Optionally check response for more info
+			if (selected === 'user') {
+				goto('/userhome');
+			} else {
+				goto('/adminhome');
+			}
+		} catch (err) {
+			loginError = err.message;
+		}
 	}
 </script>
 
@@ -29,6 +54,9 @@
 			</button>
 		</div>
 		<form class="login-form">
+			{#if loginError}
+				<p class="login-error">{loginError}</p>
+			{/if}
 			<input type="email" placeholder="Email" class="login-input" bind:value={email} required />
 			<input
 				type="password"
@@ -38,12 +66,18 @@
 				required
 			/>
 			<a href="/forgot-password" class="forgot-link">Forgot password?</a>
-			<button type="submit" class="login-btn">LOGIN</button>
+			<button type="submit" class="login-btn" onclick={handleLogin}>LOGIN</button>
 		</form>
 	</div>
 </main>
 
 <style>
+	.login-error {
+		color: #e53935;
+		font-size: 0.95em;
+		margin-bottom: 0.5em;
+		text-align: center;
+	}
 	.login-form {
 		display: flex;
 		flex-direction: column;
@@ -58,7 +92,7 @@
 		padding: 0.9em 1em;
 		border: 1px solid #ffffff;
 		border-radius: 1.5em;
-        border: 1.5px solid rgb(126, 125, 125);
+		border: 1.5px solid rgb(126, 125, 125);
 		font-size: 1em;
 		outline: none;
 		background: #fafafa;
@@ -94,7 +128,7 @@
 	}
 	.login-btn:hover {
 		background: #222;
-        color:white;
+		color: white;
 	}
 	.container {
 		display: flex;
