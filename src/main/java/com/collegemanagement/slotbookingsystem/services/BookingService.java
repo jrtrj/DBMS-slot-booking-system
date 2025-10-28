@@ -94,7 +94,7 @@ public class BookingService {
         // 5. Save and return
         Long newId = bookingRequestDao.save(newRequest);
         return bookingRequestDao.findById(newId)
-                .orElseThrow(()_ -> new RuntimeException("Failed to create and retrieve booking request"));
+                .orElseThrow(() -> new RuntimeException("Failed to create and retrieve booking request"));
     }
 
     /**
@@ -135,7 +135,7 @@ public class BookingService {
      */
     public void rejectBookingRequest(Long requestId, String reason, User adminUser) {
         BookingRequest request = bookingRequestDao.findById(requestId)
-                .orElseThrow(()_ -> new RuntimeException("Booking request not found"));
+                .orElseThrow(() -> new RuntimeException("Booking request not found"));
 
         // --- LOGIC: Check authorization ---
         if (!Objects.equals(request.approverId(), adminUser.id())) {

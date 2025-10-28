@@ -2,10 +2,9 @@ package com.collegemanagement.slotbookingsystem.controller;
 
 import com.collegemanagement.slotbookingsystem.model.User;
 import com.collegemanagement.slotbookingsystem.services.UserService;
-import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -18,27 +17,13 @@ public class UserController {
         this.userService = userService;
     }
 
-    /**
-     * Handles HTTP POST requests to /api/users/register.
-     * Creates a new user.
-     *
-     * @param requestBody A JSON object with user details.
-     * @return The newly created user (as JSON) and a 201 Created status.
-     */
-    @PostMapping("/register")
-    @ResponseStatus(HttpStatus.CREATED)
-    public User registerUser(@RequestBody Map<String, Object> requestBody) {
-        return userService.registerUser(requestBody);
-    }
-
-    /**
-     * Handles HTTP GET requests to /api/users.
-     * Fetches and returns a list of all users.
-     *
-     * @return A list of all users (as JSON).
-     */
-    @GetMapping
-    public List<User> getAllUsers() {
-        return userService.getAllUsers();
+    @PostMapping("/login")
+    public ResponseEntity<User> login(@RequestBody Map<String, String> credentials) {
+        try {
+            User user = userService.login(credentials);
+            return ResponseEntity.ok(user);
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(401).build(); // Unauthorized
+        }
     }
 }
