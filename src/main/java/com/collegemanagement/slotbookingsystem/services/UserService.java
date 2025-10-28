@@ -43,14 +43,12 @@ public class UserService implements UserDetailsService {
 
     /**
      * Authenticates a user based on their email and password.
-     * @param credentials A map containing "email" and "password".
+     * @param email The user's email.
+     * @param plainTextPassword The user's plain text password.
      * @return The authenticated User object if successful.
      * @throws RuntimeException if authentication fails.
      */
-    public User login(Map<String, String> credentials) {
-        String email = credentials.get("email");
-        String plainTextPassword = credentials.get("password");
-
+    public User login(String email, String plainTextPassword) {
         // 1. Find the user by their email
         User user = userDao.findByEmail(email)
                 .orElseThrow(() -> new RuntimeException("Invalid email or password"));

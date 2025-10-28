@@ -1,13 +1,13 @@
 package com.collegemanagement.slotbookingsystem.controller;
 
 import com.collegemanagement.slotbookingsystem.model.Club;
+import com.collegemanagement.slotbookingsystem.dto.CreateClubRequest;
 import com.collegemanagement.slotbookingsystem.services.ClubService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Map;
 
 /**
  * Handles all incoming HTTP requests related to clubs.
@@ -48,8 +48,7 @@ public class ClubController {
      */
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public Club createClub(@RequestBody Map<String, String> requestBody) {
-        String name = requestBody.get("name");
-        return clubService.createClub(name);
+    public Club createClub(@RequestBody CreateClubRequest request) {
+        return clubService.createClub(request.getName());
     }
 }

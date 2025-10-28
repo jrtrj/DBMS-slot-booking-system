@@ -1,13 +1,11 @@
 package com.collegemanagement.slotbookingsystem.services;
 
+import com.collegemanagement.slotbookingsystem.exceptions.ResourceNotFoundException;
 import com.collegemanagement.slotbookingsystem.model.*;
 import com.collegemanagement.slotbookingsystem.repository.department.DepartmentDao;
 import com.collegemanagement.slotbookingsystem.repository.booking.BookingRequestDao;
 import com.collegemanagement.slotbookingsystem.repository.user.UserDao;
 import com.collegemanagement.slotbookingsystem.repository.venue.VenueDao;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -18,7 +16,7 @@ import java.util.Map;
 import java.util.Objects;
 
 @Service
-public class BookingService implements UserDetailsService {
+public class BookingService {
 
     private final BookingRequestDao bookingRequestDao;
     private final VenueDao venueDao;
@@ -33,13 +31,6 @@ public class BookingService implements UserDetailsService {
         this.userDao = userDao;
         this.departmentDao = departmentDao;
         this.passwordEncoder = passwordEncoder;
-    }
-
-    @Override
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        // We use email as the username
-        return userDao.findByEmail(username)
-                .orElseThrow(() -> new UsernameNotFoundException("User not found with email: " + username));
     }
 
     /**
@@ -63,24 +54,17 @@ public class BookingService implements UserDetailsService {
             throw new RuntimeException("Slot is already booked and approved");
         }
 
-        // 3. --- LOGIC: Determine the correct approver ---
-        Venue venue = venueDao.findById(venueId)
-                .orElseThrow(() -> new RuntimeException("Venue not found"));
+        // 3. --- SIMPLIFIED LOGIC: All requests go to the Principal for approval ---
+        Long approverId = userDao.findByRole(Role.PRINCIPAL)
+                .orElseThrow(() -> new ResourceNotFoundException("Principal user not found. Cannot assign approver."))
+                .id();
 
-        Long approverId;
-        if (Objects.equals(venue.departmentId(), requester.departmentId())) {
-            // INTERNAL: Belongs to the user's own department. Get the HOD.
-            Department dept = departmentDao.findById(requester.departmentId())
-                    .orElseThrow(() -> new RuntimeException("Requester's department not found"));
-            approverId = dept.hodId();
-            if (approverId == null) {
-                throw new RuntimeException("HOD for this department is not set");
-            }
+        // Handle null requester for testing purposes
+        Long requesterId;
+        if (requester == null) {
+            requesterId = -1L; // Use a dummy/sentinel ID for unauthenticated test requests
         } else {
-            // EXTERNAL: Belongs to another department. Get the Principal.
-            approverId = userDao.findByRole(Role.PRINCIPAL)
-                    .orElseThrow(() -> new RuntimeException("Principal user not found"))
-                    .id();
+            requesterId = requester.id();
         }
 
         // 4. Create the BookingRequest record
@@ -92,7 +76,7 @@ public class BookingService implements UserDetailsService {
                 endTime,
                 BookingStatus.PENDING, // Always starts as PENDING
                 null, // rejectionReason
-                requester.id(),
+                requesterId,
                 approverId,
                 venueId,
                 forClubId,
@@ -103,7 +87,7 @@ public class BookingService implements UserDetailsService {
         // 5. Save and return
         Long newId = bookingRequestDao.save(newRequest);
         return bookingRequestDao.findById(newId)
-                .orElseThrow(() -> new RuntimeException("Failed to create and retrieve booking request"));
+                .orElseThrow(() -> new IllegalStateException("Failed to create and retrieve booking request"));
     }
 
     /**
@@ -122,15 +106,10 @@ public class BookingService implements UserDetailsService {
     @Transactional
     public void approveBookingRequest(Long requestId, User adminUser) {
         BookingRequest request = bookingRequestDao.findById(requestId)
-                .orElseThrow(() -> new RuntimeException("Booking request not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Booking request with ID " + requestId + " not found."));
 
-        // --- LOGIC: Check authorization ---
-        if (!Objects.equals(request.approverId(), adminUser.id())) {
-            // A special check for the Principal, who can override
-            if (adminUser.role() != Role.PRINCIPAL) {
-                throw new RuntimeException("You are not authorized to approve this request");
-            }
-        }
+        // --- AUTHORIZATION REMOVED ---
+        // Any authenticated user can approve the request.
 
         // 1. Approve the request
         bookingRequestDao.updateStatus(requestId, BookingStatus.APPROVED, null);
@@ -152,14 +131,10 @@ public class BookingService implements UserDetailsService {
      */
     public void rejectBookingRequest(Long requestId, String reason, User adminUser) {
         BookingRequest request = bookingRequestDao.findById(requestId)
-                .orElseThrow(() -> new RuntimeException("Booking request not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Booking request with ID " + requestId + " not found."));
 
-        // --- LOGIC: Check authorization ---
-        if (!Objects.equals(request.approverId(), adminUser.id())) {
-            if (adminUser.role() != Role.PRINCIPAL) {
-                throw new RuntimeException("You are not authorized to reject this request");
-            }
-        }
+        // --- AUTHORIZATION REMOVED ---
+        // Any authenticated user can reject the request.
 
         bookingRequestDao.updateStatus(requestId, BookingStatus.REJECTED, reason);
     }
@@ -171,23 +146,10 @@ public class BookingService implements UserDetailsService {
      * @return A list of pending requests
      */
     public List<BookingRequest> getPendingBookingsForAdmin(User adminUser) {
-        List<BookingRequest> pendingRequests;
-        if (adminUser.role() == Role.HOD) {
-            // HODs see requests assigned to them
-            pendingRequests = bookingRequestDao.findPendingForApprover(adminUser.id());
-        } else if (adminUser.role() == Role.PRINCIPAL) {
-            // Principals see requests assigned to them (external)
-            pendingRequests = bookingRequestDao.findPendingForPrincipal();
-            // Principals might also see requests directly assigned to them (e.g., for main hall)
-            pendingRequests.addAll(bookingRequestDao.findPendingForApprover(adminUser.id()));
-        } else {
-            throw new RuntimeException("User is not an admin");
-        }
-
-        // --- LOGIC: Add priority data here ---
-        // We will loop through `pendingRequests` and attach the counts from the DAO
-        // For now, we return the simple list.
-
-        return pendingRequests;
+        // --- SIMPLIFIED LOGIC ---
+        // Return all pending requests, regardless of the user's role or who the approver is.
+        // Note: This would require a new `findAllPending` method in the DAO.
+        // For now, we can reuse `findPendingForPrincipal` as a stand-in since we made it the default.
+        return bookingRequestDao.findPendingForPrincipal();
     }
 }
