@@ -3,6 +3,9 @@ package com.collegemanagement.slotbookingsystem.services;
 import com.collegemanagement.slotbookingsystem.model.Role;
 import com.collegemanagement.slotbookingsystem.model.User;
 import com.collegemanagement.slotbookingsystem.repository.user.UserDao;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -10,7 +13,7 @@ import java.util.List;
 import java.util.Map;
 
 @Service
-public class UserService {
+public class UserService implements UserDetailsService {
 
     private final UserDao userDao;
     private final PasswordEncoder passwordEncoder;
@@ -18,6 +21,13 @@ public class UserService {
     public UserService(UserDao userDao, PasswordEncoder passwordEncoder) {
         this.userDao = userDao;
         this.passwordEncoder = passwordEncoder;
+    }
+
+    @Override
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+        // We use email as the username
+        return userDao.findByEmail(username)
+                .orElseThrow(() -> new UsernameNotFoundException("User not found with email: " + username));
     }
 
     public List<User> getAllUsers() {
