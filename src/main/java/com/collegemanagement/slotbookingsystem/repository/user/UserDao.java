@@ -31,23 +31,17 @@ public class UserDao {
 
     public Optional<User> findById(Long id) {
         String sql = "SELECT * FROM users WHERE id = ?";
-        try {
-            User user = jdbcTemplate.queryForObject(sql, new UserRowMapper(), id);
-            return Optional.ofNullable(user);
-        } catch (EmptyResultDataAccessException e) {
-            return Optional.empty();
-        }
+        // Use query which returns a list to avoid throwing an exception for an empty result.
+        List<User> users = jdbcTemplate.query(sql, new UserRowMapper(), id);
+        return users.stream().findFirst();
     }
 
     // for login logic
     public Optional<User> findByEmail(String email) {
         String sql = "SELECT * FROM users WHERE email = ?";
-        try {
-            User user = jdbcTemplate.queryForObject(sql, new UserRowMapper(), email);
-            return Optional.ofNullable(user);
-        } catch (EmptyResultDataAccessException e) {
-            return Optional.empty();
-        }
+        // This is a cleaner way to handle cases where no user is found.
+        List<User> users = jdbcTemplate.query(sql, new UserRowMapper(), email);
+        return users.stream().findFirst();
     }
 
     /**
@@ -56,12 +50,8 @@ public class UserDao {
      */
     public Optional<User> findByRole(Role role) {
         String sql = "SELECT * FROM users WHERE role = ? LIMIT 1";
-        try {
-            User user = jdbcTemplate.queryForObject(sql, new UserRowMapper(), role.name());
-            return Optional.ofNullable(user);
-        } catch (EmptyResultDataAccessException e) {
-            return Optional.empty();
-        }
+        List<User> users = jdbcTemplate.query(sql, new UserRowMapper(), role.name());
+        return users.stream().findFirst();
     }
 
      // This method expects the password to ALREADY BE HASHED.

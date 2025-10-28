@@ -1,11 +1,10 @@
 package com.collegemanagement.slotbookingsystem.controller;
 
 import com.collegemanagement.slotbookingsystem.model.User;
+import com.collegemanagement.slotbookingsystem.dto.LoginRequest;
 import com.collegemanagement.slotbookingsystem.services.UserService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.Map;
 
 @RestController
 @RequestMapping("/api/users")
@@ -18,9 +17,9 @@ public class UserController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<User> login(@RequestBody Map<String, String> credentials) {
+    public ResponseEntity<User> login(@RequestBody LoginRequest loginRequest) {
         try {
-            User user = userService.login(credentials);
+            User user = userService.login(loginRequest.getEmail(), loginRequest.getPassword());
             return ResponseEntity.ok(user);
         } catch (RuntimeException e) {
             return ResponseEntity.status(401).build(); // Unauthorized

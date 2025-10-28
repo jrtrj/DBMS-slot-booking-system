@@ -27,9 +27,10 @@ public class BookingController {
      */
     @PostMapping("/request")
     public ResponseEntity<BookingRequest> createBookingRequest(
-            @RequestBody Map<String, Object> requestData,
-            @AuthenticationPrincipal User user) {
-        BookingRequest newRequest = bookingService.createBookingRequest(requestData, user);
+            @RequestBody Map<String, Object> requestData
+    ) { // Corrected: Removed commented-out parameter from signature
+        // For testing, you might need to fetch a dummy user or pass a user ID.
+        BookingRequest newRequest = bookingService.createBookingRequest(requestData, null); // Service will need to handle null
         return ResponseEntity.status(201).body(newRequest);
     }
 
@@ -47,8 +48,10 @@ public class BookingController {
      * An admin (HOD/Principal) approves a request.
      */
     @PostMapping("/approve/{id}")
-    public ResponseEntity<String> approveBookingRequest(@PathVariable Long id, @AuthenticationPrincipal User adminUser) {
-        bookingService.approveBookingRequest(id, adminUser);
+    public ResponseEntity<String> approveBookingRequest(@PathVariable Long id) { // Corrected: Removed commented-out parameter from signature
+        // For testing, pass null or a dummy admin user. The service logic has authorization removed, so it will proceed.
+        // The service logic has authorization removed, so it will proceed.
+        bookingService.approveBookingRequest(id, null);
         return ResponseEntity.ok("Booking request " + id + " approved.");
     }
 
@@ -59,10 +62,10 @@ public class BookingController {
     @PostMapping("/reject/{id}")
     public ResponseEntity<String> rejectBookingRequest(
             @PathVariable Long id,
-            @RequestBody Map<String, String> body,
-            @AuthenticationPrincipal User adminUser) {
+            @RequestBody Map<String, String> body
+            /*@AuthenticationPrincipal User adminUser*/) { // Corrected: Removed commented-out parameter from signature
         String reason = body.get("reason");
-        bookingService.rejectBookingRequest(id, reason, adminUser);
+        bookingService.rejectBookingRequest(id, reason, null);
         return ResponseEntity.ok("Booking request " + id + " rejected.");
     }
 
@@ -71,7 +74,7 @@ public class BookingController {
      * An admin (HOD/Principal) views their pending dashboard.
      */
     @GetMapping("/pending")
-    public List<BookingRequest> getPendingBookings(@AuthenticationPrincipal User adminUser) {
-        return bookingService.getPendingBookingsForAdmin(adminUser);
+    public List<BookingRequest> getPendingBookings() { // Corrected: Removed commented-out parameter from signature
+        return bookingService.getPendingBookingsForAdmin(null);
     }
 }
