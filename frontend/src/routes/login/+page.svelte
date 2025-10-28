@@ -38,7 +38,7 @@
 				required
 			/>
 			<a href="/forgot-password" class="forgot-link">Forgot password?</a>
-			<button type="submit" class="login-btn">Login</button>
+			<button type="submit" class="login-btn">LOGIN</button>
 		</form>
 	</div>
 </main>
@@ -54,8 +54,8 @@
 		margin-top: 5em;
 	}
 	.login-input {
-		width: 100%;
-		padding: 0.7em 1em;
+		width: 95%;
+		padding: 0.9em 1em;
 		border: 1px solid #ffffff;
 		border-radius: 1.5em;
         border: 1.5px solid rgb(126, 125, 125);
@@ -81,10 +81,10 @@
 		text-decoration: underline;
 	}
 	.login-btn {
-		width: 100%;
+		width: 80%;
 		padding: 0.7em 0;
-		background: #a5a5a5;
-		color: #fff;
+		background: #f0efef;
+		color: #1b1b1b;
 		border: 1.5px solid black;
 		border-radius: 1.5em;
 		font-size: 1.1em;
@@ -94,6 +94,7 @@
 	}
 	.login-btn:hover {
 		background: #222;
+        color:white;
 	}
 	.container {
 		display: flex;

@@ -1,13 +1,13 @@
 <script>
-	// let {event_name,venue,date,time}=$props();
+	let {event_name,venue,date,time}=$props();
 </script>
 
 <main>
 	<div class="card">
-		<h2>Event name</h2>
+		<h2>{event_name}</h2>
         <div class="dateVenue">
-            <p>18 OCT -<span>11:00AM - 12:00PM</span></p>
-            <p class="venue">RB Seminar hall</p>
+            <p>{date} -<span>{time}</span></p>
+            <p class="venue">{venue}</p>
         </div>
 	</div>
 </main>

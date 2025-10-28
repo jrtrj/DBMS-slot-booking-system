@@ -8,7 +8,7 @@
 
 <main>
 	<nav class="bottom-nav">
-		<a href="/home" class="nav-btn {isActive('/home')}">
+		<a href="/userhome" class="nav-btn {isActive('/userhome')}">
 			<img src="/house-regular.svg" alt="Home" class="nav-icon" />
 		</a>
 		<a href="/profile" class="nav-btn {isActive('/profile')}">
