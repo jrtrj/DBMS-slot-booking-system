@@ -11,6 +11,9 @@ public class UserRowMapper implements RowMapper<User> {
 
     @Override
     public User mapRow(ResultSet rs, int rowNum) throws SQLException {
+        // Handle nullable department_id correctly
+        Long departmentId = rs.getObject("department_id", Long.class);
+
         return new User(
                 rs.getLong("id"),
                 rs.getString("email"),
@@ -18,7 +21,7 @@ public class UserRowMapper implements RowMapper<User> {
                 rs.getString("first_name"),
                 rs.getString("last_name"),
                 Role.valueOf(rs.getString("role")),
-                rs.getLong("department_id")
+                departmentId // Use the nullable Long
         );
     }
 }

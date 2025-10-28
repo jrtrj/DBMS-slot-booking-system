@@ -55,6 +55,15 @@ public class BookingController {
     }
 
     /**
+     * Handles GET requests to /api/bookings/approved
+     * Fetches a list of all approved booking requests.
+     */
+    @GetMapping("/approved")
+    public List<BookingRequest> getApprovedBookings() {
+        return bookingService.getApprovedBookings();
+    }
+
+    /**
      * Handles POST requests to /api/bookings/approve/{id}
      * An admin (HOD/Principal) approves a request.
      */

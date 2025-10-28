@@ -39,6 +39,14 @@ public class BookingRequestDao {
     }
 
     /**
+     * READ: Finds all booking requests with an 'APPROVED' status.
+     */
+    public List<BookingRequest> findApproved() {
+        String sql = "SELECT * FROM booking_requests WHERE status = 'APPROVED'";
+        return jdbcTemplate.query(sql, rowMapper);
+    }
+
+    /**
      * CREATE: Saves a new booking request to the database.
      * @return The auto-generated ID of the new request.
      */

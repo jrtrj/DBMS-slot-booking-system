@@ -1,5 +1,6 @@
 package com.collegemanagement.slotbookingsystem.repository.user;
 
+import com.collegemanagement.slotbookingsystem.model.Role;
 import com.collegemanagement.slotbookingsystem.model.User;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -43,6 +44,20 @@ public class UserDao {
         String sql = "SELECT * FROM users WHERE email = ?";
         try {
             User user = jdbcTemplate.queryForObject(sql, new UserRowMapper(), email);
+            return Optional.ofNullable(user);
+        } catch (EmptyResultDataAccessException e) {
+            return Optional.empty();
+        }
+    }
+
+    /**
+     * Finds the first user matching a specific role.
+     * Assumes some roles (like PRINCIPAL) are unique.
+     */
+    public Optional<User> findByRole(Role role) {
+        String sql = "SELECT * FROM users WHERE role = ? LIMIT 1";
+        try {
+            User user = jdbcTemplate.queryForObject(sql, new UserRowMapper(), role.name());
             return Optional.ofNullable(user);
         } catch (EmptyResultDataAccessException e) {
             return Optional.empty();
