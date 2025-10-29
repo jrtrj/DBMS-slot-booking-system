@@ -1,30 +1,38 @@
 <script>
-    
-
 	import EventCard from '$lib/EventCard.svelte';
 	import Header from '$lib/Header.svelte';
 	import Navigation from '$lib/Navigation.svelte';
 	import { onMount } from 'svelte';
 
 	let approvedEvents = [];
+	let venues = [];
 	let loading = true;
 	let error = '';
 
+	function getVenueName(id) {
+		const v = venues.find((v) => v.id === id);
+		return v ? v.name : id;
+	}
+
 	onMount(async () => {
 		try {
-			const res = await fetch('http://localhost:8080/api/bookings/approved');
-			if (!res.ok) throw new Error('Failed to fetch events');
-			approvedEvents = await res.json();
+			const [eventsRes, venuesRes] = await Promise.all([
+				fetch('http://localhost:8080/api/bookings/approved'),
+				fetch('http://localhost:8080/api/venues')
+			]);
+			if (!eventsRes.ok || !venuesRes.ok) throw new Error('Failed to fetch events or venues');
+			approvedEvents = await eventsRes.json();
+			venues = await venuesRes.json();
 		} catch (err) {
 			error = err.message;
 		} finally {
 			loading = false;
 		}
 	});
-
 </script>
+
 <main>
-	<Header h1="Welcome," h2="Home" showBell={true}/>
+	<Header h1="Welcome," h2="Home" showBell={true} />
 
 	<div class="add-event-container">
 		<a href="/inbox" class="add-event-link">INBOX</a>
@@ -41,18 +49,23 @@
 			<h3 class="events-count">Approved Events ({approvedEvents.length})</h3>
 			<div class="event-cards-list">
 				{#each approvedEvents as event}
-					<EventCard event_name={event.name} venue={event.venue} date={event.date} time={event.time} />
+					<EventCard
+						event_name={event.eventTitle}
+						venue={getVenueName(event.venueId)}
+						date={event.startTime}
+						time={event.endTime}
+					/>
 				{/each}
 			</div>
 		{/if}
 	</div>
-    <!-- <EventCard event_name="Hash" venue="RB Seminar" date="18-OCTober" time="11:00AM-12:00PM" /> -->
+	<!-- <EventCard event_name="Hash" venue="RB Seminar" date="18-OCTober" time="11:00AM-12:00PM" /> -->
 
-	<Navigation role ="user"/>
-	
+	<Navigation role="user" />
 </main>
+
 <style>
-    .add-event-container {
+	.add-event-container {
 		display: flex;
 		justify-content: center;
 		margin: 2em 0 1.5em 0;
@@ -67,7 +80,9 @@
 		color: #111;
 		text-decoration: none;
 		background: #fafafa;
-		transition: background 0.2s, color 0.2s;
+		transition:
+			background 0.2s,
+			color 0.2s;
 	}
 	.add-event-link:hover {
 		background: #111;

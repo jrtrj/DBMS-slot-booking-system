@@ -3,8 +3,8 @@
 	import Header from '$lib/Header.svelte';
 	import Navigation from '$lib/Navigation.svelte';
 
-	let eventName = $state('');
-	let venue = $state('');
+	// let eventName = $state('');
+	// let venue = $state('');
 	let date = $state('');
 	let timeFrom = $state('');
 	let timeTo = $state('');
@@ -23,9 +23,9 @@
 			venuesLoading = false;
 		}
 	});
-	let eventTitle = '';
-	let eventDescription = '';
-	let venueId = '';
+	let eventTitle = $state('');
+	let eventDescription = $state('');
+	let venueId = $state('');
 
 	onMount(async () => {
 		try {
