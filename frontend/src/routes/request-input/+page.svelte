@@ -3,14 +3,29 @@
 	import Header from '$lib/Header.svelte';
 	import Navigation from '$lib/Navigation.svelte';
 
-	let eventName = '';
-	let venue = '';
-	let date = '';
-	let timeFrom = '';
-	let timeTo = '';
-	let venues = [];
-	let venuesLoading = true;
-	let venuesError = '';
+	let eventName = $state('');
+	let venue = $state('');
+	let date = $state('');
+	let timeFrom = $state('');
+	let timeTo = $state('');
+	let venues = $state([]);
+	let venuesLoading = $state(true);
+	let venuesError = $state('');
+
+	onMount(async () => {
+		try {
+			const res = await fetch('http://localhost:8080/api/venues');
+			if (!res.ok) throw new Error('Failed to fetch venues');
+			venues = await res.json();
+			venuesLoading = false;
+		} catch (err) {
+			venuesError = err.message;
+			venuesLoading = false;
+		}
+	});
+	let eventTitle = '';
+	let eventDescription = '';
+	let venueId = '';
 
 	onMount(async () => {
 		try {
@@ -24,14 +39,19 @@
 		}
 	});
 
+	function buildDateTime(date, time) {
+		if (!date || !time) return '';
+		return date + 'T' + time;
+	}
+
 	async function handleSubmit(e) {
 		e.preventDefault();
 		const payload = {
-			eventName,
-			venue,
-			date,
-			timeFrom,
-			timeTo
+			eventTitle,
+			eventDescription,
+			startTime: buildDateTime(date, timeFrom),
+			endTime: buildDateTime(date, timeTo),
+			venueId: Number(venueId)
 		};
 		try {
 			const res = await fetch('http://localhost:8080/api/bookings/request', {
@@ -44,8 +64,9 @@
 			if (!res.ok) {
 				throw new Error('Failed to submit event');
 			}
-			eventName = '';
-			venue = '';
+			eventTitle = '';
+			eventDescription = '';
+			venueId = '';
 			date = '';
 			timeFrom = '';
 			timeTo = '';
@@ -59,18 +80,28 @@
 <main>
 	<Header h1="NEW EVENT!" h2="Add details" showBell={true} />
 	<form class="request-form" onsubmit={handleSubmit}>
-		<label class="input-label" for="eventName">Event Name</label>
+		<label class="input-label" for="eventTitle">Event Name</label>
 		<input
-			id="eventName"
+			id="eventTitle"
 			type="text"
 			placeholder="Event Name"
-			bind:value={eventName}
+			bind:value={eventTitle}
 			class="input-field"
 			required
 		/>
 
-		<label class="input-label" for="venue">Venue</label>
-		<select id="venue" bind:value={venue} class="input-field" required>
+		<label class="input-label" for="eventDescription">Event Description</label>
+		<input
+			id="eventDescription"
+			type="text"
+			placeholder="Event Description"
+			bind:value={eventDescription}
+			class="input-field"
+			required
+		/>
+
+		<label class="input-label" for="venueId">Venue</label>
+		<select id="venueId" bind:value={venueId} class="input-field" required>
 			<option value="" disabled selected>Select Venue</option>
 			{#if venuesLoading}
 				<option disabled>Loading venues...</option>
@@ -78,9 +109,7 @@
 				<option disabled>{venuesError}</option>
 			{:else}
 				{#each venues as v}
-					<option value={typeof v === 'string' ? v : v.name}
-						>{typeof v === 'string' ? v : v.name}</option
-					>
+					<option value={v.id}>{v.name}</option>
 				{/each}
 			{/if}
 		</select>
@@ -96,6 +125,7 @@
 		</div>
 
 		<button type="submit" class="submit-btn">Submit</button>
+
 	</form>
 	<!-- <Navigation role ="user"/> -->
 </main>
