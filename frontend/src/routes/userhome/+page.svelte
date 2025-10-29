@@ -41,7 +41,7 @@
 			<h3 class="events-count">Approved Events ({approvedEvents.length})</h3>
 			<div class="event-cards-list">
 				{#each approvedEvents as event}
-					<EventCard event_name={event.name} venue={event.venue} date={event.date} time={event.time} />
+					<EventCard event_name={event.eventTitle} venue={event.venueId} date={event.date} time={event.time} />
 				{/each}
 			</div>
 		{/if}

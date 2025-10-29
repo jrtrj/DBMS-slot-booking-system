@@ -6,5 +6,4 @@
 <main>
     <Header h1="Profile" h2="" showBell={true} />
     <Navigation role='user' />
-     
 </main> 
