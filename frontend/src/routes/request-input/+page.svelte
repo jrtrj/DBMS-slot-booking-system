@@ -123,7 +123,7 @@
 		gap: 1.5em;
 		max-width: 600px;
 		margin: 0em auto;
-		padding: 1.5em 1.5em;
+		padding: 1em 1.5em;
 		/* background: #fff; */
 		border-radius: 1.2em;
 		/* box-shadow: 0 2px 16px 0 rgba(0,0,0,0.07); */
