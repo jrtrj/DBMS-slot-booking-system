@@ -16,7 +16,8 @@
 		>
 			<img src="/house-regular.svg" alt="Home" class="nav-icon" />
 		</a>
-		<a href="/profile" class="nav-btn {isActive('/profile')}">
+		<a href={role === 'admin' ? '/adminprofile' : '/userprofile'}
+		   class="nav-btn {isActive(role === 'admin' ? '/adminprofile' : '/userprofile')}">
 			<img src="/user-regular.svg" alt="Profile" class="nav-icon" />
 		</a>
 	</nav>

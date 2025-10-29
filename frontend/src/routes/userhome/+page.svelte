@@ -12,7 +12,7 @@
 
 	onMount(async () => {
 		try {
-			const res = await fetch('http://localhost:8080/api/events/approved');
+			const res = await fetch('http://localhost:8080/api/bookings/approved');
 			if (!res.ok) throw new Error('Failed to fetch events');
 			approvedEvents = await res.json();
 		} catch (err) {

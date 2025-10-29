@@ -78,13 +78,13 @@
 		}
 	}
 
-	function formatTime(t) {
-		if (!t) return '';
-		// Try to format ISO or HH:mm
-		const d = new Date(t);
-		if (!isNaN(d)) return d.toLocaleString();
-		return t;
-	}
+		function formatTime(t) {
+			if (!t) return '';
+			// Try to format ISO or HH:mm
+			const d = new Date(t);
+			if (!isNaN(d.getTime())) return d.toLocaleString();
+			return t;
+		}
 </script>
 
 <main>
