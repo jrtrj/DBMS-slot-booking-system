@@ -41,8 +41,13 @@ public class BookingService {
      */
     @Transactional
     public BookingRequest createBookingRequest(Map<String, Object> requestData, User requester) {
-        // 1. Extract data from the request map
-        Long venueId = ((Number) requestData.get("venueId")).longValue();
+        // 1. Extract and validate data from the request map
+        Object venueIdObj = requestData.get("venueId");
+        if (venueIdObj == null) {
+            throw new IllegalArgumentException("venueId is a required field");
+        }
+        Long venueId = ((Number) venueIdObj).longValue();
+
         LocalDateTime startTime = LocalDateTime.parse((String) requestData.get("startTime"));
         LocalDateTime endTime = LocalDateTime.parse((String) requestData.get("endTime"));
         Long forClubId = requestData.get("forClubId") != null ? ((Number) requestData.get("forClubId")).longValue() : null;

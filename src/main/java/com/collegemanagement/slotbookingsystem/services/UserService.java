@@ -1,5 +1,6 @@
 package com.collegemanagement.slotbookingsystem.services;
 
+import com.collegemanagement.slotbookingsystem.dto.RegistrationRequest;
 import com.collegemanagement.slotbookingsystem.model.Role;
 import com.collegemanagement.slotbookingsystem.model.User;
 import com.collegemanagement.slotbookingsystem.repository.user.UserDao;
@@ -10,7 +11,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Map;
 
 @Service
 public class UserService implements UserDetailsService {
@@ -34,11 +34,26 @@ public class UserService implements UserDetailsService {
         return userDao.findAll();
     }
 
-    public User registerUser(User user) {
-        String hashedPassword = passwordEncoder.encode(user.hashedPassword());
-        User userToSave = new User(user.id(), user.email(), hashedPassword, user.firstName(), user.lastName(), user.role(), user.departmentId());
+    public User registerUser(RegistrationRequest request) {
+        // Add validation for email, password, etc.
+        if (userDao.findByEmail(request.getEmail()).isPresent()) {
+            throw new RuntimeException("Email already in use");
+        }
+
+        String hashedPassword = passwordEncoder.encode(request.getPassword());
+
+        User userToSave = new User(
+                null, // ID is auto-generated
+                request.getEmail(),
+                hashedPassword,
+                request.getFirstName(),
+                request.getLastName(),
+                Role.valueOf(request.getRole().toUpperCase()),
+                request.getDepartmentId()
+        );
+
         Long id = userDao.save(userToSave);
-        return userDao.findById(id).orElse(null);
+        return userDao.findById(id).orElseThrow(() -> new IllegalStateException("Could not retrieve user after creation."));
     }
 
     /**
@@ -48,11 +63,8 @@ public class UserService implements UserDetailsService {
      * @return The authenticated User object if successful.
      * @throws RuntimeException if authentication fails.
      */
-    public User login(String email, String plainTextPassword) {
-        // 1. Find the user by their email
-        User user = userDao.findByEmail(email)
-                .orElseThrow(() -> new RuntimeException("Invalid email or password"));
-
+    public User login(String email, String plainTextPassword) { // 1. Find the user by their email
+        User user = userDao.findByEmail(email).orElseThrow(() -> new RuntimeException("Invalid email or password"));
         // 2. Check if the provided password matches the stored hash
         if (passwordEncoder.matches(plainTextPassword, user.hashedPassword())) {
             // 3. Passwords match! Return the user.
