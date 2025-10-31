@@ -3,12 +3,14 @@
 	import Header from '$lib/Header.svelte';
 	import Navigation from '$lib/Navigation.svelte';
 	import { onMount } from 'svelte';
+	
 
 	let approvedEvents = [];
 	let venues = [];
 	let loading = true;
 	let error = '';
 
+	
 	function getVenueName(id) {
 		const v = venues.find((v) => v.id === id);
 		return v ? v.name : id;

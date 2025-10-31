@@ -2,6 +2,7 @@
 	import { onMount } from 'svelte';
 	import Header from '$lib/Header.svelte';
 	import Navigation from '$lib/Navigation.svelte';
+	import {user as authStore} from '$lib/authStore';
 
 	// let eventName = $state('');
 	// let venue = $state('');
@@ -46,12 +47,18 @@
 
 	async function handleSubmit(e) {
 		e.preventDefault();
+		const currentUser = authStore.getId();
+		if(!currentUser){
+			alert('You must be logged in');
+			return;
+		}
 		const payload = {
 			eventTitle,
 			eventDescription,
 			startTime: buildDateTime(date, timeFrom),
 			endTime: buildDateTime(date, timeTo),
-			venueId: Number(venueId)
+			venueId: Number(venueId),
+			requesterId:currentUser
 		};
 		try {
 			const res = await fetch('http://localhost:8080/api/bookings/request', {
