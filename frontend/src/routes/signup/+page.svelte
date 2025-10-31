@@ -1,10 +1,13 @@
 <script>
 	import { onMount } from 'svelte';
+
 	import Header from '$lib/Header.svelte';
+	import { goto } from '$app/navigation';
+	import { user as authStore } from '$lib/authStore.js';
 
 	let email = $state('');
 	let password = $state('');
-	let firstName =$state('');
+	let firstName = $state('');
 	let lastName = $state('');
 	let role = $state('STUDENT');
 	let departmentId = $state('');
@@ -45,7 +48,17 @@
 				body: JSON.stringify(payload)
 			});
 			if (!res.ok) throw new Error('Registration failed');
-			success = 'Registration successful!';
+			// Assume backend returns the created user object
+			const userData = await res.json();
+			authStore.login(userData);
+			// Redirect based on role
+			const isUserRole = userData.role === 'STUDENT' || userData.role === 'TEACHER';
+			
+		 	if (isUserRole) {
+				goto('/userhome');
+			} else {
+				success = 'Registration successful, but unknown role.';
+			}
 			email = password = firstName = lastName = departmentId = '';
 			role = 'STUDENT';
 		} catch (err) {
