@@ -1,70 +1,16 @@
 <script>
-	import { goto } from "$app/navigation";
-	import Header from "$lib/Header.svelte";
+	import { goto } from '$app/navigation';
+	import Header from '$lib/Header.svelte';
 
+	let baseURL = import.meta.env.VITE_BASE_URL;
 	let email = $state('');
-	let passsword = $state('');
+	// Typo fix: 'passsword' corrected to 'password'
+	let password = $state(''); 
 	let selected = $state('user');
 	let loginError = $state('');
+	let isLoading = $state(false);
 
-	const dummyUsers = [
-		// Students
-		{
-			id: 7,
-			email: 'amit.cs@college.com',
-			password: 'password',
-			firstName: 'Amit',
-			lastName: 'Jain',
-			role: 'student',
-			departmentId: 1
-		},
-		{
-			id: 8,
-			email: 'deepa.ece@college.com',
-			password: 'password',
-			firstName: 'Deepa',
-			lastName: 'M',
-			role: 'student',
-			departmentId: 2
-		},
-		{
-			id: 9,
-			email: 'riya.cs@college.com',
-			password: 'password',
-			firstName: 'Riya',
-			lastName: 'Verma',
-			role: 'student',
-			departmentId: 1
-		},
-		// Admins (HODs)
-		{
-			id: 3,
-			email: 'hod.cs@college.com',
-			password: 'password',
-			firstName: 'Dr. Anil',
-			lastName: 'Kumar',
-			role: 'HOD',
-			departmentId: 1
-		},
-		{
-			id: 4,
-			email: 'hod.ece@college.com',
-			password: 'password',
-			firstName: 'Dr. Sunita',
-			lastName: 'Reddy',
-			role: 'HOD',
-			departmentId: 2
-		},
-		{
-			id: 5,
-			email: 'hod.mech@college.com',
-			password: 'password',
-			firstName: 'Dr. Ramesh',
-			lastName: 'Patel',
-			role: 'HOD',
-			departmentId: 3
-		}
-	];
+	// The dummyUsers array is no longer needed.
 
 	function select(role) {
 		selected = role;
@@ -73,32 +19,49 @@
 	async function handleLogin(e) {
 		e.preventDefault();
 		loginError = '';
-		const role = selected === 'user' ? 'student' : 'HOD';
+		isLoading = true;
 
-		// Dummy user check (local only)
-		if (role === 'student') {
-			const user = dummyUsers.find(
-				(u) => u.email === email && u.password === passsword && u.role === 'student'
-			);
-			if (user) {
-				goto('/userhome');
-				return;
-			} else {
-				loginError = 'Email or password is incorrect';
-				return;
+		// 1. Create the payload for the backend
+		const payload = {
+			email: email,
+			password: password
+		};
+
+		try {
+			// 2. Call your real login endpoint
+			const res = await fetch(`${baseURL}/api/users/login`, {
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/json'
+				},
+				body: JSON.stringify(payload)
+			});
+
+			if (!res.ok) {
+				throw new Error('Invalid email or password');
 			}
-		}
-		if (role === 'HOD') {
-			const admin = dummyUsers.find(
-				(u) => u.email === email && u.password === passsword && u.role === 'HOD'
-			);
-			if (admin) {
+
+			// 3. Get the user data from the successful response
+			const user = await res.json(); 
+
+			// 4. Check the user's role from the response
+			const isAdminRole = user.role === 'HOD' || user.role === 'PRINCIPAL' || user.role === 'SUPERADMIN';
+			const isUserRole = user.role === 'STUDENT' || user.role === 'TEACHER';
+
+			// 5. Redirect based on the role and the toggle selection
+			if (selected === 'admin' && isAdminRole) {
 				goto('/adminhome');
-				return;
+			} else if (selected === 'user' && isUserRole) {
+				goto('/userhome');
 			} else {
-				loginError = 'Email or password is incorrect';
-				return;
+				// This happens if they log in as an admin but had "USER" toggled
+				loginError = `You logged in as a ${user.role}, but selected ${selected.toUpperCase()}.`;
 			}
+
+		} catch (err) {
+			loginError = err.message;
+		} finally {
+			isLoading = false;
 		}
 	}
 </script>
@@ -129,12 +92,13 @@
 				type="password"
 				placeholder="Password"
 				class="login-input"
-				bind:value={passsword}
+				bind:value={password}
 				required
 			/>
 			<a href="/forgot-password" class="forgot-link">Forgot password?</a>
 			<button type="submit" class="login-btn" onclick={handleLogin}>LOGIN</button>
 		</form>
+		<p class="signup-p">New User?<a href="/signup">Sign UP</a></p>
 	</div>
 </main>
 
@@ -235,5 +199,13 @@
 	.toggle-btn.active {
 		background: #111;
 		color: #fff;
+	}
+
+	.signup-p{
+		margin-top: 12em;
+	}
+	.signup-p a{
+		font-weight: 500;
+		text-decoration: underline;
 	}
 </style>
