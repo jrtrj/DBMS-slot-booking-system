@@ -2,16 +2,16 @@
 	import { onMount } from 'svelte';
 	import Header from '$lib/Header.svelte';
 
-	let email = '';
-	let password = '';
-	let firstName = '';
-	let lastName = '';
-	let role = 'STUDENT';
-	let departmentId = '';
-	let departments = [];
-	let error = '';
-	let success = '';
-	let isLoading = false;
+	let email = $state('');
+	let password = $state('');
+	let firstName =$state('');
+	let lastName = $state('');
+	let role = $state('STUDENT');
+	let departmentId = $state('');
+	let departments = $state([]);
+	let error = $state('');
+	let success = $state('');
+	let isLoading = $state(false);
 
 	const BASE_URL = import.meta.env.VITE_BASE_URL;
 
