@@ -58,7 +58,7 @@
 
 <main>
 	<Header h1="Sign Up" h2="Create your account" showBell={false} />
-	<form class="signup-form" on:submit|preventDefault={handleSignup}>
+	<form class="signup-form" onsubmit={handleSignup}>
 		{#if error}
 			<p class="error">{error}</p>
 		{/if}
