@@ -23,7 +23,7 @@
 	// fetch departments on mount
 	onMount(async () => {
 		try {
-			const res = await fetch(`${BASE_URL}/api/departments`);
+			const res = await fetch(`http://localhost:8080/api/departments`);
 			if (!res.ok) throw new Error('Failed to fetch departments');
 			departments = await res.json();
 		} catch (err) {
@@ -41,32 +41,33 @@
 </script>
 
 <main>
-	{#if currentUser}
-		<Header h1="Profile" h2="" showBell={true} />
-		<Navigation role="user" />
-		<section class="profile-card">
-			<h1 class="profile-label">Name</h1>
-			<div class="profile-field">
-				<h2 class="name">{currentUser.name}</h2>
-			</div>
-			<h1 class="profile-label">Email</h1>
-			<div class="profile-field">
-				<h2 class="name">{currentUser.email}</h2>
-			</div>
-			<h1 class="profile-label">Role</h1>
-			<div class="profile-field">
-				<h2 class="name">{currentUser.role}</h2>
-			</div>
-			<h1 class="profile-label">Department</h1>
-			<div class="profile-field">
-				<h2 class="name">{departmentName}</h2>
-			</div>
-			<div class="login-button">
-				<button class="logout" on:click={handleLogOut}>Log out</button>
-			</div>
-		</section>
+    
+    {#if currentUser}
+	<Header h1="Profile" h2="" showBell={true} />
+	<Navigation role="user" />
+	<section class="profile-card">
+		<h1 class="profile-label">Name</h1>
+		<div class="profile-field">
+			<h2 class="name">{currentUser.name}</h2>
+		</div>
+		<h1 class="profile-label">Email</h1>
+		<div class="profile-field">
+			<h2 class="name">{currentUser.email}</h2>
+		</div>
+		<h1 class="profile-label">Role</h1>
+		<div class="profile-field">
+			<h2 class="name">{currentUser.role}</h2>
+		</div>
+		<h1 class="profile-label">Department</h1>
+		<div class="profile-field">
+			<h2 class="name">{departmentName}</h2>
+		</div>
+        <div class="login-button">
+		<button class="logout" on:click={handleLogOut}>Log out</button>
+        </div>
+	</section>
 	{:else}
-		<section class="no-user">
+	<section class="no-user">
 			<p>You are not logged in.</p>
 			<a href="/login" style="text-decoration: underline;">Go to Login</a>
 		</section>
@@ -113,10 +114,11 @@
 		background: #f0efef;
 		cursor: pointer;
 	}
-	.logout:hover {
-		background-color: black;
-		color: white;
-	}
+  .logout:hover{
+    background-color: black;
+    color: white;
+    
+  }
 	.error {
 		color: #e53935;
 		text-align: center;
@@ -127,9 +129,9 @@
 		font-weight: 700;
 		margin: 0.6rem 0 0.35rem 0; /* gap between label and its field */
 	}
-	.login-button {
-		display: flex;
-		align-items: center;
-		justify-content: center;
-	}
+    .login-button{
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
 </style>
