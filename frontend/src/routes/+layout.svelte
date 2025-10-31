@@ -9,7 +9,7 @@
 	let { children } = $props();
 
 	// 1. Define the pages a non-logged-in user IS allowed to see
-	const publicPages = ['/login', '/signup'];
+	const publicPages = ['/login', '/signup','/'];
 
 	// 2. Create a state to track if the user is allowed to see the page
 	// Start it as 'false' so nothing renders by default
