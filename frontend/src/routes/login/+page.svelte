@@ -1,16 +1,15 @@
 <script>
 	import { goto } from '$app/navigation';
 	import Header from '$lib/Header.svelte';
+	// 1. Import your new auth store
+	import { user as authStore, user } from '$lib/authStore.js';
 
 	let baseURL = import.meta.env.VITE_BASE_URL;
 	let email = $state('');
-	// Typo fix: 'passsword' corrected to 'password'
 	let password = $state(''); 
 	let selected = $state('user');
 	let loginError = $state('');
 	let isLoading = $state(false);
-
-	// The dummyUsers array is no longer needed.
 
 	function select(role) {
 		selected = role;
@@ -21,15 +20,13 @@
 		loginError = '';
 		isLoading = true;
 
-		// 1. Create the payload for the backend
 		const payload = {
 			email: email,
 			password: password
 		};
 
 		try {
-			// 2. Call your real login endpoint
-			const res = await fetch(`${baseURL}/api/users/login`, {
+			const res = await fetch(`http://localhost:8080/api/users/login`, {
 				method: 'POST',
 				headers: {
 					'Content-Type': 'application/json'
@@ -41,21 +38,24 @@
 				throw new Error('Invalid email or password');
 			}
 
-			// 3. Get the user data from the successful response
-			const user = await res.json(); 
+			const userData = await res.json(); 
 
-			// 4. Check the user's role from the response
-			const isAdminRole = user.role === 'HOD' || user.role === 'PRINCIPAL' || user.role === 'SUPERADMIN';
-			const isUserRole = user.role === 'STUDENT' || user.role === 'TEACHER';
+			// 2. SAVE THE USER TO THE STORE
+			authStore.login(userData);
+			console.log(userData)
 
-			// 5. Redirect based on the role and the toggle selection
+			// 3. Check roles and redirect
+			const isAdminRole = userData.role === 'HOD' || userData.role === 'PRINCIPAL' || userData.role === 'SUPERADMIN';
+			const isUserRole = userData.role === 'STUDENT' || userData.role === 'TEACHER';
+
 			if (selected === 'admin' && isAdminRole) {
 				goto('/adminhome');
 			} else if (selected === 'user' && isUserRole) {
 				goto('/userhome');
 			} else {
-				// This happens if they log in as an admin but had "USER" toggled
-				loginError = `You logged in as a ${user.role}, but selected ${selected.toUpperCase()}.`;
+				loginError = `You logged in as a ${userData.role}, but selected ${selected.toUpperCase()}.`;
+				// Log them out if selection was wrong
+				authStore.logout(); 
 			}
 
 		} catch (err) {
