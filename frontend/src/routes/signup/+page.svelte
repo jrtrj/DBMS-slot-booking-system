@@ -55,7 +55,7 @@
 			const isUserRole = userData.role === 'STUDENT' || userData.role === 'TEACHER';
 			
 		 	if (isUserRole) {
-				goto('/userhome');
+				goto('/login');
 			} else {
 				success = 'Registration successful, but unknown role.';
 			}
