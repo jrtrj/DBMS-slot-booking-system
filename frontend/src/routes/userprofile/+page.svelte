@@ -41,33 +41,32 @@
 </script>
 
 <main>
-    
-    {#if currentUser}
-	<Header h1="Profile" h2="" showBell={true} />
-	<Navigation role="user" />
-	<section class="profile-card">
-		<h1 class="profile-label">Name</h1>
-		<div class="profile-field">
-			<h2 class="name">{currentUser.name}</h2>
-		</div>
-		<h1 class="profile-label">Email</h1>
-		<div class="profile-field">
-			<h2 class="name">{currentUser.email}</h2>
-		</div>
-		<h1 class="profile-label">Role</h1>
-		<div class="profile-field">
-			<h2 class="name">{currentUser.role}</h2>
-		</div>
-		<h1 class="profile-label">Department</h1>
-		<div class="profile-field">
-			<h2 class="name">{departmentName}</h2>
-		</div>
-        <div class="login-button">
-		<button class="logout" on:click={handleLogOut}>Log out</button>
-        </div>
-	</section>
+	{#if currentUser}
+		<Header h1="Profile" h2="" showBell={true} />
+		<Navigation role="user" />
+		<section class="profile-card">
+			<h1 class="profile-label">Name</h1>
+			<div class="profile-field">
+				<h2 class="name">{currentUser.name}</h2>
+			</div>
+			<h1 class="profile-label">Email</h1>
+			<div class="profile-field">
+				<h2 class="name">{currentUser.email}</h2>
+			</div>
+			<h1 class="profile-label">Role</h1>
+			<div class="profile-field">
+				<h2 class="name">{currentUser.role}</h2>
+			</div>
+			<h1 class="profile-label">Department</h1>
+			<div class="profile-field">
+				<h2 class="name">{departmentName}</h2>
+			</div>
+			<div class="login-button">
+				<button class="logout" on:click={handleLogOut}>Log out</button>
+			</div>
+		</section>
 	{:else}
-	<section class="no-user">
+		<section class="no-user">
 			<p>You are not logged in.</p>
 			<a href="/login" style="text-decoration: underline;">Go to Login</a>
 		</section>
@@ -80,19 +79,19 @@
 
 <style>
 	.profile-card {
-		max-width: 720px;
-		margin: 2em auto;
-		padding: 1.5em;
-		border: 1px solid #e0e0e0;
-		border-radius: 8px;
+		max-width: 45rem; /* ~720px */
+		margin: 2rem auto;
+		padding: 1.5rem;
+		border: 0.0625rem solid #e0e0e0; /* 1px */
+		border-radius: 0.5rem; /* ~8px */
 		background: #fff;
 	}
 	.profile-field {
 		width: 100%;
-		height: 3em;
+		height: 3rem;
 		background-color: rgb(236, 236, 236);
-		border-radius: 1.2em;
-		border: 2px solid black;
+		border-radius: 1.2rem;
+		border: 0.125rem solid black; /* 2px */
 		margin-bottom: 2rem; /* gap between the field and the next label */
 		display: flex;
 		align-items: center;
@@ -100,38 +99,37 @@
 	}
 	.name {
 		margin: 0;
-		font-size: 1.15em;
+		font-size: 1.15rem;
 		color: rgb(50, 50, 50);
 	}
 	.logout {
-        width: 100%;
-        background-color: grey;
-		margin-top: 12em;
-		padding: 0.6em 1.5em;
-        
-		border-radius: 3em;
-		border: 1px solid #111;
+		width: 100%;
+		background-color: grey;
+		margin-top: 2rem;
+		padding: 0.6rem 1.5rem;
+
+		border-radius: 1.5rem;
+		border: 0.0625rem solid #111; /* 1px */
 		background: #f0efef;
 		cursor: pointer;
 	}
-  .logout:hover{
-    background-color: black;
-    color: white;
-    
-  }
+	.logout:hover {
+		background-color: black;
+		color: white;
+	}
 	.error {
 		color: #e53935;
 		text-align: center;
-		margin-top: 1em;
+		margin-top: 1rem;
 	}
 	.profile-label {
-		font-size: 1.05em;
+		font-size: 1.05rem;
 		font-weight: 700;
 		margin: 0.6rem 0 0.35rem 0; /* gap between label and its field */
 	}
-    .login-button{
-        display: flex;
-        align-items: center;
-        justify-content: center;
-    }
+	.login-button {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+	}
 </style>
