@@ -1,9 +1,5 @@
 package com.collegemanagement.slotbookingsystem.dto;
 
-/**
- * A Data Transfer Object (DTO) representing the data required to register a new user.
- * This provides type safety and clear validation contracts.
- */
 public class RegistrationRequest {
     private String email;
     private String password;
@@ -12,7 +8,6 @@ public class RegistrationRequest {
     private String role;
     private Long departmentId;
 
-    //<editor-fold desc="Getters and Setters">
     public String getEmail() {
         return email;
     }
@@ -60,5 +55,4 @@ public class RegistrationRequest {
     public void setDepartmentId(Long departmentId) {
         this.departmentId = departmentId;
     }
-    //</editor-fold>
 }
