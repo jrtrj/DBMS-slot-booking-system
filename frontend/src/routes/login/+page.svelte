@@ -95,7 +95,7 @@
 				bind:value={password}
 				required
 			/>
-			<a href="/forgot-password" class="forgot-link">Forgot password?</a>
+			<!-- <a href="/forgot-password" class="forgot-link">Forgot password?</a> -->
 			<button type="submit" class="login-btn" onclick={handleLogin}>LOGIN</button>
 		</form>
 		<p class="signup-p">New User?<a href="/signup">Sign UP</a></p>
@@ -132,7 +132,7 @@
 	.login-input:focus {
 		border: 1.5px solid #111;
 	}
-	.forgot-link {
+	/* .forgot-link {
 		align-self: flex-end;
 		font-size: 0.7em;
 		color: #555;
@@ -144,7 +144,7 @@
 	.forgot-link:hover {
 		color: #111;
 		text-decoration: underline;
-	}
+	} */
 	.login-btn {
 		width: 80%;
 		padding: 0.7em 0;

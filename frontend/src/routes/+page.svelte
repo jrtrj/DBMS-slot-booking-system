@@ -96,8 +96,8 @@
 		flex-direction: row;
 		align-items: center;
 		justify-content: center;
-		gap: 1rem;
-		margin-bottom: 0.5rem;
+		gap: 0.5rem;
+		margin-bottom: 0.25rem;
 	}
 	/* .desktop-img {
 		width: 15rem;
@@ -140,14 +140,14 @@
 		flex-direction: column;
 	}
 	.content {
-		flex: 1;
+		flex: 0;
 	}
 	.bottom-img {
-		width: 98vw;
-		height: 25vh;
+		width: 93vw;
+		height: 24vh;
 		object-fit: cover;
 		object-position: center bottom;
-		margin-top: 5rem;
+		margin-top: 3rem;
 		display: block;
 	}
 	/* .button_container {
