@@ -1,6 +1,9 @@
 <script>
 	import { onMount } from 'svelte';
 
+	import * as Alert from "$lib/components/ui/alert/index.js";
+	import CheckCircle2Icon from "@lucide/svelte/icons/check-circle-2";
+
 	import Header from '$lib/Header.svelte';
 	import { goto } from '$app/navigation';
 	import { user as authStore } from '$lib/authStore.js';
@@ -76,7 +79,11 @@
 			<p class="error">{error}</p>
 		{/if}
 		{#if success}
-			<p class="success">{success}</p>
+			<!-- <p class="success">{success}</p> -->
+			<Alert.Root class ="destructive">
+				<CheckCircle2Icon />
+				<Alert.Title class="font-medium">{success}</Alert.Title>
+  			</Alert.Root>
 		{/if}
 		<div class="form-group">
 			<label for="email">Email</label>
@@ -191,10 +198,10 @@
 		margin-bottom: 0.5em;
 		text-align: center;
 	}
-	.success {
+	/* .success {
 		color: #388e3c;
 		font-size: 0.95em;
 		margin-bottom: 0.5em;
 		text-align: center;
-	}
+	} */
 </style>

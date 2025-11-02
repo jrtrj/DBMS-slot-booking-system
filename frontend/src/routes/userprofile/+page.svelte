@@ -48,7 +48,7 @@
 	<section class="profile-card">
 		<h1 class="profile-label">Name</h1>
 		<div class="profile-field">
-			<h2 class="name">{currentUser.name}</h2>
+			<h2 class="name">{currentUser.firstName} {currentUser.lastName}</h2>
 		</div>
 		<h1 class="profile-label">Email</h1>
 		<div class="profile-field">
